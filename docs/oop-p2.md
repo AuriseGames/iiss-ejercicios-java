@@ -217,6 +217,10 @@ En la siguiente lista se incluyen 10 posibles problemas que pueden encontrarse e
 
 a) ¿Existe algún tipo de problema en la implementación anterior de los que se incluye en la lista anterior? ¿Es necesario aplicar refactoring en este caso? En el caso de que existan problemas, indique cuáles son y qué tipos de problemas piensa que generarían en el futuro si no se aplica el refactoring ahora.
 
+Respuesta:
+
+  
+
 b) En el caso de que la implementación necesite la aplicación de refactoring, realice los cambios oportunos e indique las mejoras que aporta su implementación respecto a la original.
 
 ### Ejercicio 2

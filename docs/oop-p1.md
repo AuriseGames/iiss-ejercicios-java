@@ -182,13 +182,35 @@ b) En el caso de que el uso de la herencia no sea correcto, proponga una soluci�
 #### `Animal.java`
 
 ```java
-public abstract class Animal {
-    //Number of legs the animal holds
-    protected int numberOfLegs = 0;
+public class Animal {
 
-    public abstract String speak();
-    public abstract boolean eat(String typeOfFeed);
-    public abstract int getNumberOfLegs();
+    //Number of legs the animal holds
+    private int numberOfLegs = 0;
+    private String typeOfFeed = "Nothing";
+    private String sound = "Animal sound";
+
+    //Constructor
+    public Animal(String sound, String typeOfFeed, int numberOfLegs) {
+        this.sound = sound;
+        this.typeOfFeed = typeOfFeed;
+        this.numberOfLegs = numberOfLegs;
+    }
+
+    public String speak() {
+        return sound;
+    }
+
+    public boolean eat(String typeOfFeed) {
+        if(typeOfFeed.equals(this.typeOfFeed)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int getNumberOfLegs() {
+        return numberOfLegs;
+    }
 }
 ```
 
@@ -196,18 +218,19 @@ public abstract class Animal {
 
 ```java
 public class Cat {
-    private Animal animal = new Animal();
+
+    private int numberOfLegs = 4;
+    private String typeOfFeed = "fish";
+    private String sound = "Meow";
+
+    private Animal animal = new Animal(numberOfLegs, typeOfFeed, sound);
 
     public String speak() {
-        return "Meow";
+        return animal.speak();
     }
 
     public boolean eat(String typeOfFeed) {
-        if(typeOfFeed.equals("fish")) {
-            return true;
-        } else {
-            return false;
-        }
+        return animal.eat(typeOfFeed);
     }
 
     public int getNumberOfLegs() {
@@ -219,22 +242,37 @@ public class Cat {
 
 ```java
 public class Dog {
-    private Animal animal = new Animal();
+
+    private int numberOfLegs = 4;
+    private String typeOfFeed = "meat";
+    private String sound = "Woof";
+
+    private Animal animal = new Animal(numberOfLegs, typeOfFeed, sound);
 
     public String speak() {
-        return "Woof";
+        return animal.speak();
     }
 
     public boolean eat(String typeOfFeed) {
-        if(typeOfFeed.equals("meat")) {
-            return true;
-        } else {
-            return false;
-        }
+        return animal.eat(typeOfFeed);
     }
 
     public int getNumberOfLegs() {
         return animal.getNumberOfLegs();
     }
+
 }
 ```
+
+#### `Main.java`
+
+```java
+    ...
+    Cat cat = new Cat();
+    Dog dog = new Dog();
+    System.out.println(cat.speak());
+    System.out.println(dog.speak());
+    ...
+```
+    
+    Con esta implementación, se evita la violación del principio de sustitución de Liskov, ya que las instancias de las clases Cat y Dog pueden utilizarse en lugar de las instancias de la clase Animal sin afectar el comportamiento del programa.
