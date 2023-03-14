@@ -47,17 +47,17 @@ public class ElementsSet<E> extends HashSet<E> {
 
 a) ¿Es el uso de la herencia adecuado para la implementación de la clase `ElementsSet`? ¿Qué salida muestra la función `System.out.println` al invocar el método `getNumberOfAddedElements`, 3 o 6?
 
-    El resultado de la operación imprimiría en pantalla el valor 6 en lugar de 3 debido a que la clase ElementsSet<E> extiende la clase HashSet<E> y sobrescribe los métodos add y addAll. Sin embargo, los métodos addAll de HashSet también invocan el método add para insertar cada elemento en el conjunto.
+El resultado de la operación imprimiría en pantalla el valor 6 en lugar de 3 debido a que la clase ElementsSet<E> extiende la clase HashSet<E> y sobrescribe los métodos add y addAll. Sin embargo, los métodos addAll de HashSet también invocan el método add para insertar cada elemento en el conjunto.
 
-    Por lo tanto, cuando se llama al método addAll de ElementsSet<E> con una colección de tres elementos, el método addAll sobrescrito de ElementsSet<E> cuenta los tres elementos agregados, pero también llama al método add sobrescrito de ElementsSet<E> tres veces para agregar cada elemento individualmente, lo que también incrementa la variable numberOfAddedElements.
+Por lo tanto, cuando se llama al método addAll de ElementsSet<E> con una colección de tres elementos, el método addAll sobrescrito de ElementsSet<E> cuenta los tres elementos agregados, pero también llama al método add sobrescrito de ElementsSet<E> tres veces para agregar cada elemento individualmente, lo que también incrementa la variable numberOfAddedElements.
 
-    Por lo tanto, la variable numberOfAddedElements termina con un valor de 6 en lugar de 3. Esto demuestra un mal uso de la herencia, ya que la implementación de la superclase puede tener efectos secundarios no deseados en la subclase.
+Por lo tanto, la variable numberOfAddedElements termina con un valor de 6 en lugar de 3. Esto demuestra un mal uso de la herencia, ya que la implementación de la superclase puede tener efectos secundarios no deseados en la subclase.
 
 b) En el caso de que haya algún problema en la implementación anterior, proponga una solución alternativa usando composición/delegación que resuelva el problema.
 
-    Una solución alternativa usando composición/delegación podría ser crear una instancia privada de HashSet<E> dentro de la clase ElementsSet<E> y delegar la implementación de los métodos add y addAll a esa instancia. De esta manera, se evitaría la herencia de la clase HashSet<E> y se tendría un mayor control sobre la implementación de los métodos.
+Una solución alternativa usando composición/delegación podría ser crear una instancia privada de HashSet<E> dentro de la clase ElementsSet<E> y delegar la implementación de los métodos add y addAll a esa instancia. De esta manera, se evitaría la herencia de la clase HashSet<E> y se tendría un mayor control sobre la implementación de los métodos.
 
-    El código de la solución alternativa quedaría de la siguiente manera:
+El código de la solución alternativa quedaría de la siguiente manera:
 
 #### `ElementsSet.java`
 
@@ -87,7 +87,7 @@ public class ElementsSet<E> {
 }
 ```
 
-    Con esta implementación, se asegura que el método addAll no llame al método add de la superclase HashSet<E>, evitando así la duplicación en la cuenta de elementos agregados. Al mismo tiempo, se mantiene la funcionalidad de la clase original y se tiene un mayor control sobre la implementación de los métodos.
+Con esta implementación, se asegura que el método addAll no llame al método add de la superclase HashSet<E>, evitando así la duplicación en la cuenta de elementos agregados. Al mismo tiempo, se mantiene la funcionalidad de la clase original y se tiene un mayor control sobre la implementación de los métodos.
 
 ### Ejercicio 2
 
@@ -171,13 +171,13 @@ public class Dog extends Animal {
 
 a) ¿Es correcto el uso de herencia en la implementación de las clases `Cat` y `Dog`? ¿Qué beneficios se obtienen?
 
-    No es correcto el uso de herencia en la implementación de las clases Cat y Dog ya que las clases derivadas no están especializando el comportamiento de la clase base, es decir, no están agregando nuevas funcionalidades a las que ya existen en la clase Animal. En cambio, simplemente están redefiniendo los métodos ya existentes en la clase base. Este enfoque no cumple con el principio de sustitución de Liskov, que establece que las instancias de una clase derivada deben poder utilizarse en lugar de las instancias de la clase base sin afectar el comportamiento del programa.
+No es correcto el uso de herencia en la implementación de las clases Cat y Dog ya que las clases derivadas no están especializando el comportamiento de la clase base, es decir, no están agregando nuevas funcionalidades a las que ya existen en la clase Animal. En cambio, simplemente están redefiniendo los métodos ya existentes en la clase base. Este enfoque no cumple con el principio de sustitución de Liskov, que establece que las instancias de una clase derivada deben poder utilizarse en lugar de las instancias de la clase base sin afectar el comportamiento del programa.
 
 b) En el caso de que el uso de la herencia no sea correcto, proponga una solución alternativa. ¿Cuáles son los beneficios de la solución propuesta frente a la original?
 
-    Una solución alternativa sería utilizar la composición en lugar de la herencia. En lugar de hacer que Cat y Dog hereden de Animal, se podrían crear objetos Animal dentro de las clases Cat y Dog. De esta manera, se podrían utilizar las funcionalidades de Animal sin heredar su implementación y, por lo tanto, evitar la violación del principio de sustitución de Liskov.
+Una solución alternativa sería utilizar la composición en lugar de la herencia. En lugar de hacer que Cat y Dog hereden de Animal, se podrían crear objetos Animal dentro de las clases Cat y Dog. De esta manera, se podrían utilizar las funcionalidades de Animal sin heredar su implementación y, por lo tanto, evitar la violación del principio de sustitución de Liskov.
 
-    Por ejemplo:
+Por ejemplo:
 
 #### `Animal.java`
 
@@ -275,4 +275,4 @@ public class Dog {
     ...
 ```
     
-    Con esta implementación, se evita la violación del principio de sustitución de Liskov, ya que las instancias de las clases Cat y Dog pueden utilizarse en lugar de las instancias de la clase Animal sin afectar el comportamiento del programa.
+Con esta implementación, se evita la violación del principio de sustitución de Liskov, ya que las instancias de las clases Cat y Dog pueden utilizarse en lugar de las instancias de la clase Animal sin afectar el comportamiento del programa.
