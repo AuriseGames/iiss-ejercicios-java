@@ -215,13 +215,71 @@ En la siguiente lista se incluyen 10 posibles problemas que pueden encontrarse e
 - Se usan variables globales
 - Los cambios dentro de una clase tienden a afectar a otras clases
 
-a) ¿Existe algún tipo de problema en la implementación anterior de los que se incluye en la lista anterior? ¿Es necesario aplicar refactoring en este caso? En el caso de que existan problemas, indique cuáles son y qué tipos de problemas piensa que generarían en el futuro si no se aplica el refactoring ahora.
+#### a) ¿Existe algún tipo de problema en la implementación anterior de los que se incluye en la lista anterior? ¿Es necesario aplicar refactoring en este caso? En el caso de que existan problemas, indique cuáles son y qué tipos de problemas piensa que generarían en el futuro si no se aplica el refactoring ahora.
 
-Respuesta:
+En la implementación anterior, se pueden identificar varios problemas que se incluyen en la lista propuesta, tales como:
 
-  
+- Funciones con nombre que no especifican claramente su objetivo: el método getUsers() podría llamarse de manera más clara, por ejemplo, getCapitalizedUsersSortedByPoints().
+- Funciones con demasiada responsabilidad: el método getUsers() tiene dos responsabilidades, que son ordenar los usuarios por puntos y luego capitalizar sus nombres. Estas dos tareas deberían ser separadas en dos métodos diferentes.
+- Se utilizan comentarios para explicar código difícil de entender: el comentario Sorting users by points indica una tarea que debería ser evidente por el propio código, por lo que debería ser eliminado.
 
-b) En el caso de que la implementación necesite la aplicación de refactoring, realice los cambios oportunos e indique las mejoras que aporta su implementación respecto a la original.
+Si no se aplica el refactoring ahora, estos problemas podrían generar dificultades en el futuro, como la dificultad de entender y mantener el código, el riesgo de errores al modificar el código existente y la falta de escalabilidad. Por lo tanto, es recomendable realizar el refactoring para mejorar la legibilidad, la mantenibilidad y la escalabilidad del código.
+
+#### b) En el caso de que la implementación necesite la aplicación de refactoring, realice los cambios oportunos e indique las mejoras que aporta su implementación respecto a la original.
+
+#### `GroupOfUsers.java`
+
+```java 
+public class GroupOfUsers {
+ 
+    private static Map<String, Integer> usersWithPoints =
+      new HashMap<String, Integer>() {{
+        put("User1", 800);
+        put("User2", 550);
+        put("User3", 20);
+        put("User4", 300);
+    }};
+    
+    public List<String> getCapitalizedUsersSortedByPoints() {
+        List<String> sortedUsers = sortUsersByPoints();
+        List<String> capitalizedUsers = capitalizeUserNames(sortedUsers);
+        return capitalizedUsers;
+    }
+    
+    private List<String> sortUsersByPoints() {
+        return usersWithPoints.entrySet()
+            .stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+    }
+    
+    private List<String> capitalizeUserNames(List<String> users) {
+        return users.stream()
+            .map(String::toUpperCase)
+            .collect(Collectors.toList());
+    }
+}
+```
+
+#### `Main.java`
+
+```java
+    ...
+    GroupOfUsers group = new GroupOfUsers();
+    List<String> users = group.getCapitalizedUsersSortedByPoints();
+    System.out.println("The users are: " + users);
+    ...
+```
+
+En la nueva implementación, se han realizado los siguientes cambios:
+
+- Se ha renombrado el método getUsers() a getCapitalizedUsersSortedByPoints() para reflejar claramente su objetivo.
+- Se ha dividido el método getCapitalizedUsersSortedByPoints() en dos métodos privados para separar la responsabilidad de ordenar los usuarios por puntos y de capitalizar los nombres de los usuarios.
+- Se ha eliminado el comentario innecesario Sorting users by points.
+- Se ha utilizado la clase Collectors de Java 8 para simplificar la ordenación y el filtrado de listas.
+
+Estos cambios mejoran la legibilidad y la mantenibilidad del código, ya que cada método se enfoca en una tarea específica, lo que facilita la comprensión del código y permite la reutilización de cada método en otros lugares del programa. Además, los nombres de los métodos son más descriptivos, lo que ayuda a entender qué hace cada método sin necesidad de leer su código completo.
 
 ### Ejercicio 2
 
@@ -312,9 +370,106 @@ public class GroupOfUsers {
 
 Responda a las siguientes cuestiones, teniendo en cuenta la lista de los 10 posibles problemas del ejercicio anterior
 
-a) El software del ejercicio anterior ha evolucionado añadiendo nueva funcionalidad en su implementación. ¿Existe algún tipo de problema en esta versión de la implementación de los que se incluyen en la lista? ¿Es necesario aplicar refactoring en este caso? En el caso de que existan problemas, indique cuáles son y qué tipos de problemas piensa que generarían en el futuro si no se aplica el refactoring ahora.
+#### a) El software del ejercicio anterior ha evolucionado añadiendo nueva funcionalidad en su implementación. ¿Existe algún tipo de problema en esta versión de la implementación de los que se incluyen en la lista? ¿Es necesario aplicar refactoring en este caso? En el caso de que existan problemas, indique cuáles son y qué tipos de problemas piensa que generarían en el futuro si no se aplica el refactoring ahora.
 
-b) En el caso de que la implementación necesite la aplicación de refactoring, realice los cambios oportunos e indique las mejoras que aporta su implementación respecto a la original.
+Si, existen problemas en esta versión de la implementación. En concreto, se puede identificar el problema de código duplicado, ya que se repite el código de ordenación y filtrado de listas en tres ocasiones. Además, el código es difícil de leer y de mantener, ya que se mezclan las responsabilidades de ordenar y filtrar listas con las de capitalizar los nombres de los usuarios. Por último, el código no es escalable, ya que si se añade un nuevo grupo de usuarios, habría que modificar el código para añadir el nuevo grupo.
+
+Es necesario aplicar refactoring en este caso, ya que si no se aplica, el código será difícil de mantener y de escalar en el futuro, ya que podría provocar la aparición de nuevos problemas de código duplicado y de código difícil de leer y de mantener.
+
+#### b) En el caso de que la implementación necesite la aplicación de refactoring, realice los cambios oportunos e indique las mejoras que aporta su implementación respecto a la original.
+
+Se ha realizado el siguiente refactoring:
+
+#### `GroupOfUsers.java`
+
+```java
+public class GroupOfUsers {
+    
+    private static Map<String, Integer> usersWithPoints_Group1 =
+      new HashMap<String, Integer>() {{
+        put("User1", 800);
+        put("User2", 550);
+        put("User3", 20);
+        put("User4", 300);
+    }};
+    
+    private static Map<String, Integer> usersWithPoints_Group2 =
+      new HashMap<String, Integer>() {{
+        put("User1", 10);
+        put("User2", 990);
+        put("User3", 760);
+        put("User4", 230);
+    }};
+    
+    private static Map<String, Integer> usersWithPoints_Group3 =
+      new HashMap<String, Integer>() {{
+        put("User1", 1000);
+        put("User2", 200);
+        put("User3", 5);
+        put("User4", 780);
+    }};
+    
+    public List<Map<String, Integer>> getUserGroups() {
+        List<Map<String, Integer>> userGroups = new ArrayList<Map<String, Integer>>();
+        
+        userGroups.add(usersWithPoints_Group1);
+        userGroups.add(usersWithPoints_Group2);
+        userGroups.add(usersWithPoints_Group3);
+        
+        return userGroups;
+    }
+
+    public List<ArrayList<String>> getCapitalizedUsersSortedByPoints() {
+
+      List<ArrayList<String>> users = new ArrayList<ArrayList<String>>();
+
+      List<Map<String, Integer>> userGroups = getUserGroups();
+
+      for (Map<String, Integer> group : userGroups) {
+        List<String> sortedUsers = sortUsersByPoints(userGroup);
+        List<String> capitalizedUsers = capitalizeUserNames(sortedUsers);
+        users.add((ArrayList<String>)capitalizedUsers);
+      }
+
+      return users;
+    }
+
+    private List<String> sortUsersByPoints(Map<String, Integer> usersWithPoints) {
+        return usersWithPoints.entrySet()
+            .stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+    }
+    
+    private List<String> capitalizeUserNames(List<String> users) {
+        return users.stream()
+            .map(String::toUpperCase)
+            .collect(Collectors.toList());
+    }
+
+}
+```
+
+#### `Main.java`
+
+```java
+    ...
+    GroupOfUsers group = new GroupOfUsers();
+    List<ArrayList<String>> users = group.getCapitalizedUsersSortedByPoints();
+    System.out.println("The users are: " + users);
+    ...
+```
+
+Se han realizado los siguientes cambios:
+
+- Se ha creado un método `getUserGroups()` que devuelve una lista con los grupos de usuarios.
+- Se ha creado un método `getCapitalizedUsersSortedByPoints()` que devuelve una lista con los usuarios ordenados por puntos y con los nombres capitalizados.
+- Se ha creado un método `sortUsersByPoints()` que ordena los usuarios por puntos.
+- Se ha creado un método `capitalizeUserNames()` que capitaliza los nombres de los usuarios.
+
+Se ha aprovechado el refactorin del ejercicio anterior para realizar el refactorin de este ejercicio. Para hacer el código más escalable y evitar la duplicación, se ha creado el método `getUserGroups()`. De esta forma, si se añade un nuevo grupo de usuarios, no habría que modificar el código, ya que se añadiría el nuevo grupo al método `getUserGroups()`.
+
 
 ## Referencias
 
