@@ -224,26 +224,182 @@ public class Main {
 
 #### Preguntas propuestas
 
-Completar las clases `Product.java` y `ShoppingCart.java` añadiendo aserciones donde sea necesario que permitan que se cumplan las siguientes condiciones:
+#### Completar las clases `Product.java` y `ShoppingCart.java` añadiendo aserciones donde sea necesario que permitan que se cumplan las siguientes condiciones:
 
-a) En la clase `Product.java`:
+#### a) En la clase `Product.java`:
 
-- El valor del atributo `code` no puede ser un número negativo.
-- El valor del atributo `name` no puede estar vacío.
-- El valor del atributo `category` no puede estar vacío.
-- El valor del atributo `weight` no puede ser un número negativo.
-- El valor del atributo `height` no puede ser un número negativo.
+- #### El valor del atributo `code` no puede ser un número negativo.
+- #### El valor del atributo `name` no puede estar vacío.
+- #### El valor del atributo `category` no puede estar vacío.
+- #### El valor del atributo `weight` no puede ser un número negativo.
+- #### El valor del atributo `height` no puede ser un número negativo.
 
-Además, añadir un mensaje de error descriptivo en cada una de las aserciones que se hayan implementado.
+#### Además, añadir un mensaje de error descriptivo en cada una de las aserciones que se hayan implementado.
 
-b) En la clase `ShoppingCart.java`:
+### `Product.java`
+```java
+public class Product {
+	
+	private int code;
+	private String name;
+	private String category;
+	private double weight;
+	private double height;
+	
+	public Product(int code, String name, String category, double weight, double height) {
+		
+		assert code >= 0 : "Code cannot be negative";
+		this.code = code;
+		setName(name);
+		setCategory(category);
+		setWeight(weight);
+		setHeight(height);
 
-- No se puede añadir un producto con un número de unidades negativo o nulo.
-- No se puede eliminar un producto que no existe en el carrito.
+	}
+	
+	public int getCode() {
+		return code;
+	}
+	
+	public void setName(String name) {
+		assert !name.isEmpty() : "Name cannot be empty";
+		this.name = name;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public void setCategory(String category) {
+		assert !category.isEmpty() : "Category cannot be null or empty";
+		this.category = category;
+	}
+	
+	public String getCategory() {
+		return this.category;
+	}
+	
+	public void setWeight(double weight) {
+		assert weight >= 0 : "Weight cannot be negative";
+		this.weight = weight;
+	}
+	
+	public double getWeight() {
+		return this.weight;
+	}
+	
+	public void setHeight(double height) {
+		assert height >= 0 : "Height cannot be negative";
+		this.height = height;
+	}
+	
+	public double getHeight() {
+		return this.height;
+	}
+}
+```
+
+#### b) En la clase `ShoppingCart.java`:
+
+- #### No se puede añadir un producto con un número de unidades negativo o nulo.
+- #### No se puede eliminar un producto que no existe en el carrito.
+
+### `ShoppingCart.java`
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class ShoppingCart {
+	
+	Map<Product, Integer> shoppingCart;
+	
+	public ShoppingCart() {
+		shoppingCart = new HashMap<Product, Integer>();
+	}
+	
+	public void addProduct(Product product, int number) {
+		
+		assert number >= 0 : "Number cannot be negative";
+
+		if(shoppingCart.keySet().stream().filter(element -> element.getCode() == product.getCode()).count() == 0) {
+			shoppingCart.put(product, number);
+		}
+	}
+	
+	public Product removeProduct(Product product) {
+		if(shoppingCart.containsKey(product)) {
+			assert shoppingCart.get(product) > 0 : "You cannot remove a non existing product";
+			shoppingCart.remove(product);
+			return product;
+		}  else {
+			return null;
+		}
+	}
+	
+	public void printShoppingCartContent() {
+		System.out.println("The shopping cart content is: ");
+		
+		for(Product product: shoppingCart.keySet()) {
+			System.out.println(product.getCode() + " - " + product.getName() + " : " + shoppingCart.get(product));
+		}
+		
+	}
+}
+```
 
 ### Ejercicio 2
 
-Dado el código del primer ejercicio, ¿existe algún uso indebido del valor `null`?. En caso afirmativo, reemplazar su uso por el de la clase `Optional` en los casos en los que sea necesario.
+#### Dado el código del primer ejercicio, ¿existe algún uso indebido del valor `null`?. En caso afirmativo, reemplazar su uso por el de la clase `Optional` en los casos en los que sea necesario.
+
+Sí, hay un uso indebido del valor null en el código proporcionado. En el método removeProduct, cuando se elimina un producto del carrito, se devuelve el objeto Product eliminado si existe en el carrito. Sin embargo, si el producto no existe en el carrito, actualmente se devuelve null.
+
+Para mejorar esto, se puede utilizar la clase Optional en lugar de devolver null. Optional es una clase introducida en Java 8 que permite representar un valor que puede ser nulo o no nulo de manera más segura.
+
+Aquí está el código modificado usando Optional:
+
+### `ShoppingCart.java`
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+public class ShoppingCart {
+
+    Map<Product, Integer> shoppingCart;
+
+    public ShoppingCart() {
+        shoppingCart = new HashMap<Product, Integer>();
+    }
+
+    public void addProduct(Product product, int number) {
+        assert number >= 0 : "Number cannot be negative";
+
+        if (shoppingCart.keySet().stream().noneMatch(element -> element.getCode() == product.getCode())) {
+            shoppingCart.put(product, number);
+        }
+    }
+
+    public Optional<Product> removeProduct(Product product) {
+        if (shoppingCart.containsKey(product)) {
+            assert shoppingCart.get(product) > 0 : "You cannot remove a non-existing product";
+            shoppingCart.remove(product);
+            return Optional.of(product);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public void printShoppingCartContent() {
+        System.out.println("The shopping cart content is: ");
+
+        for (Product product : shoppingCart.keySet()) {
+            System.out.println(product.getCode() + " - " + product.getName() + " : " + shoppingCart.get(product));
+        }
+    }
+}
+```
 
 ## Referencias
 
