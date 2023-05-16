@@ -61,13 +61,86 @@ public class Main {
 
 #### Preguntas propuestas
 
-1. Utilice expresiones *lambda* y el API de *streams* de Java para cambiar la implementación de las operaciones de la interfaz `DataOperations` usando los mecanismos de la programación funcional.
+#### 1. Utilice expresiones *lambda* y el API de *streams* de Java para cambiar la implementación de las operaciones de la interfaz `DataOperations` usando los mecanismos de la programación funcional.
 
-2. Además, haciendo uso de expresiones *labmda* y del API de *streams*, añada a la interfaz de `DataOperations` las siguientes operaciones y su implementación:
+#### `DataOperationsImpl.java`
+```java
+public class DataOperationsImpl implements DataOperations {
+    @Override
+    public void print(int[] data) {
+        Arrays.stream(data)
+              .forEach(element -> System.out.print(element + ", "));
+        System.out.println();
+    }
 
-- Operación que devuelva la lista de números ordenada descendentemente.
-- Operación que multiplique todos los números de la lista por 10 e imprima el resultado.
-- Operación que devuelva el resultado de la suma de todos los números de la lista.
+    @Override
+    public int[] filterPairs(int[] data) {
+        return Arrays.stream(data)
+                     .filter(element -> element % 2 != 0)
+                     .toArray();
+    }
+}
+```
+
+#### 2. Además, haciendo uso de expresiones *labmda* y del API de *streams*, añada a la interfaz de `DataOperations` las siguientes operaciones y su implementación:
+
+#### - Operación que devuelva la lista de números ordenada descendentemente.
+#### - Operación que multiplique todos los números de la lista por 10 e imprima el resultado.
+#### - Operación que devuelva el resultado de la suma de todos los números de la lista.
+
+#### `DataOperations.java`
+```java
+import java.util.List;
+
+public interface DataOperations {
+    void print(int[] data);
+    int[] filterPairs(int[] data);
+    List<Integer> sortDescending(int[] data);
+    void multiplyAndPrint(int[] data);
+    int sum(int[] data);
+}
+```
+
+#### `DataOperationsImpl.java`
+```java
+public class DataOperationsImpl implements DataOperations {
+    @Override
+    public void print(int[] data) {
+        Arrays.stream(data)
+              .forEach(element -> System.out.print(element + ", "));
+        System.out.println();
+    }
+
+    @Override
+    public int[] filterPairs(int[] data) {
+        return Arrays.stream(data)
+                     .filter(element -> element % 2 != 0)
+                     .toArray();
+    }
+
+    @Override
+    public List<Integer> sortDescending(int[] data) {
+        return Arrays.stream(data)
+                     .boxed()
+                     .sorted((a, b) -> b.compareTo(a))
+                     .collect(Collectors.toList());
+    }
+
+    @Override
+    public void multiplyAndPrint(int[] data) {
+        Arrays.stream(data)
+              .map(element -> element * 10)
+              .forEach(element -> System.out.print(element + ", "));
+        System.out.println();
+    }
+
+    @Override
+    public int sum(int[] data) {
+        return Arrays.stream(data)
+                     .sum();
+    }
+}
+```
 
 ### Ejercicio 2
 
@@ -131,9 +204,74 @@ public class Main {
 
 #### Preguntas propuestas
 
-1. Utilice cierres (*closures*) para cambiar la implementación de las clases `DataSorterAsc` y `DataSorterDesc` usando los mecanismos de la programación funcional.
+#### 1. Utilice cierres (*closures*) para cambiar la implementación de las clases `DataSorterAsc` y `DataSorterDesc` usando los mecanismos de la programación funcional.
 
-2. Añada un tercer cambio haciendo uso de cierres (*closures*) para realizar la ordenación aleatoria de los elementos, siguiendo el mismo enfoque aplicado con las clases `DataSorterAsc` y `DataSorterDesc` en el apartado anterior.
+#### `DataSorterAsc.java`
+
+```java
+import java.util.Arrays;
+
+public class DataSorterAsc implements DataSorter {
+    public String[] sort(String[] data) {
+        Arrays.sort(data, (a, b) -> a.compareTo(b));
+        return data;
+    }
+}
+```
+
+#### `DataSorterDesc.java`
+
+```java
+import java.util.Arrays;
+
+public class DataSorterDesc implements DataSorter {
+    public String[] sort(String[] data) {
+        Arrays.sort(data, (a, b) -> b.compareTo(a));
+        return data;
+    }
+}
+```
+
+#### 2. Añada un tercer cambio haciendo uso de cierres (*closures*) para realizar la ordenación aleatoria de los elementos, siguiendo el mismo enfoque aplicado con las clases `DataSorterAsc` y `DataSorterDesc` en el apartado anterior.
+
+#### `DataSorterRandom.java`
+```java
+Copy code
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
+
+public class DataSorterRandom implements DataSorter {
+    public String[] sort(String[] data) {
+        Random random = new Random();
+        Arrays.sort(data, (a, b) -> random.nextInt(3) - 1);
+        return data;
+    }
+}
+```
+
+#### `Main.java`
+```java
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String args[]) {
+        String [] data = {"H", "S", "I", "V", "E", "W", "M", "P", "L",  "C", "N", "K",
+                 "O", "A", "Q", "R", "J", "D", "G", "T", "U", "X", "B", "Y", "Z", "F"};
+        System.out.println("data = " + Arrays.toString(data));
+        DataSorter dataSorter = new DataSorterDesc();
+        dataSorter.sort(data);
+        System.out.println("data (desc) = " + Arrays.toString(data));
+        dataSorter = new DataSorterAsc();
+        dataSorter.sort(data);
+        System.out.println("data (asc) = " + Arrays.toString(data));
+        dataSorter = new DataSorterRandom();
+        dataSorter.sort(data);
+        System.out.println("data (random) = " + Arrays.toString(data));
+    }
+}
+```
+
 
 ## Referencias
 
