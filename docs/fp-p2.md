@@ -241,17 +241,67 @@ public class Main {
 
 #### Preguntas propuestas
 
-Complete las secciones TO-DO de las clases `AsynchronousAPI` y `Main`, teniendo en cuenta que:
+#### Complete las secciones TO-DO de las clases `AsynchronousAPI` y `Main`, teniendo en cuenta que:
 
-- El método `additionAsync` debe devolver la suma de todos los números contenidos en `elements`.
-- El método `additionAsync` debe mostrar por consola cada uno de los elementos que esta sumando con el mensaje `Adding (element)`.
-- El método `additionAsync` debe añadir un retardo de 5 segundos en la suma de cada elemento.
-- En la función `main` se debe mostrar en consola el resultado de la suma completa con el mensaje `The result is (result)`.
+#### - El método `additionAsync` debe devolver la suma de todos los números contenidos en `elements`.
+#### - El método `additionAsync` debe mostrar por consola cada uno de los elementos que esta sumando con el mensaje `Adding (element)`.
+#### - El método `additionAsync` debe añadir un retardo de 5 segundos en la suma de cada elemento.
+#### - En la función `main` se debe mostrar en consola el resultado de la suma completa con el mensaje `The result is (result)`.
 
+#### `AsynchronousAPI.java`
+
+```java
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class AsynchronousAPI {
+
+    public static Future<Integer> additionAsync(List<Integer> elements) throws InterruptedException {
+        CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            int sum = 0;
+            for (Integer element : elements) {
+                System.out.println("Adding " + element);
+                try {
+                    Thread.sleep(5000); // Retardo de 5 segundos
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                sum += element;
+            }
+            completableFuture.complete(sum);
+        });
+
+        return completableFuture;
+    }
+}
+```
+
+#### `Main.java`
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+public class Main {
+
+    public static void main(String args[]) throws InterruptedException, ExecutionException {
+        List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        Future<Integer> completableFuture = AsynchronousAPI.additionAsync(elements);
+        Integer result = completableFuture.get();
+        System.out.println("The result is " + result);
+    }
+}
+```
 
 ### Ejercicio 2
 
-Dado los siguientes fragmentos de código responder a las siguientes preguntas:
+#### Dado los siguientes fragmentos de código responder a las siguientes preguntas:
 
 #### `AsynchronousAPI.java`
 
@@ -295,17 +345,131 @@ public class Main {
 
 #### Preguntas propuestas
 
-1. Complete las secciones TO-DO de las clases `AsynchronousAPI` y `Main`, teniendo en cuenta que:
+#### 1. Complete las secciones TO-DO de las clases `AsynchronousAPI` y `Main`, teniendo en cuenta que:
 
-- El método `additionAsync` debe devolver la suma de todos los números contenidos en `elements`.
-- El método `additionAsync` debe mostrar por consola cada uno de los elementos que esta sumando con el mensaje `Adding (element)`.
-- El método `additionAsync` debe añadir un retardo de 2 segundos en la suma de cada elemento.
-- El método `multiplicationAsync` debe devolver la producto de todos los números contenidos en `elements2`.
-- El método `multiplicationAsync` debe mostrar por consola cada uno de los elementos que esta multiplicando con el mensaje `Multiplying (element)`.
-- El método `multiplicationAsync` debe añadir un retardo de 3 segundos en el producto de cada elemento.
-- En la función `main` se debe mostrar en consola el resultado de la suma completa con el mensaje `The result is (result)`. Este mensaje debe ser mostrado de forma directa cuando se complete el resultado de la variable `completableFuture`.
+#### - El método `additionAsync` debe devolver la suma de todos los números contenidos en `elements`.
+#### - El método `additionAsync` debe mostrar por consola cada uno de los elementos que esta sumando con el mensaje `Adding (element)`.
+#### - El método `additionAsync` debe añadir un retardo de 2 segundos en la suma de cada elemento.
+#### - El método `multiplicationAsync` debe devolver la producto de todos los números contenidos en `elements2`.
+#### - El método `multiplicationAsync` debe mostrar por consola cada uno de los elementos que esta multiplicando con el mensaje `Multiplying (element)`.
+#### - El método `multiplicationAsync` debe añadir un retardo de 3 segundos en el producto de cada elemento.
+#### - En la función `main` se debe mostrar en consola el resultado de la suma completa con el mensaje `The result is (result)`. Este mensaje debe ser mostrado de forma directa cuando se complete el resultado de la variable `completableFuture`.
 
-2. Modifique el código de la clase `Main` para que el procesamiento se realice en paralelo y se obtenga el mismo resultado por consola que en el apartado anterior.
+#### `AsynchronousAPI.java`
+
+```java
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+
+public class AsynchronousAPI {
+
+    public static CompletableFuture<Integer> additionAsync(List<Integer> elements) throws InterruptedException {
+        CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            int sum = 0;
+            for (Integer element : elements) {
+                System.out.println("Adding " + element);
+                try {
+                    Thread.sleep(2000); // Retardo de 2 segundos
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                sum += element;
+            }
+            completableFuture.complete(sum);
+        });
+
+        return completableFuture;
+    }
+
+    public static CompletableFuture<Integer> multiplicationAsync(List<Integer> elements) throws InterruptedException {
+        CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            int product = 1;
+            for (Integer element : elements) {
+                System.out.println("Multiplying " + element);
+                try {
+                    Thread.sleep(3000); // Retardo de 3 segundos
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                product *= element;
+            }
+            completableFuture.complete(product);
+        });
+
+        return completableFuture;
+    }
+
+}
+```
+
+#### `Main.java`
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Main {
+
+    public static void main(String args[]) throws InterruptedException, ExecutionException {
+        List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<Integer> elements2 = Arrays.asList(11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+
+        CompletableFuture<Integer> additionFuture = AsynchronousAPI.additionAsync(elements);
+        CompletableFuture<Integer> multiplicationFuture = AsynchronousAPI.multiplicationAsync(elements2);
+
+        CompletableFuture<Void> completableFuture = CompletableFuture.allOf(additionFuture, multiplicationFuture);
+        completableFuture.thenRun(() -> {
+            try {
+                Integer additionResult = additionFuture.get();
+                Integer multiplicationResult = multiplicationFuture.get();
+                System.out.println("The result is " + additionResult);
+                System.out.println("The multiplication result is " + multiplicationResult);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+
+        completableFuture.get();
+    }
+}
+```
+
+#### 2. Modifique el código de la clase `Main` para que el procesamiento se realice en paralelo y se obtenga el mismo resultado por consola que en el apartado anterior.
+
+#### `Main.java`
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Main {
+
+    public static void main(String args[]) throws InterruptedException, ExecutionException {
+        List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<Integer> elements2 = Arrays.asList(11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+
+        CompletableFuture<Integer> additionFuture = AsynchronousAPI.additionAsync(elements);
+        CompletableFuture<Integer> multiplicationFuture = AsynchronousAPI.multiplicationAsync(elements2);
+
+        CompletableFuture<Void> completableFuture = additionFuture.thenCombine(multiplicationFuture, (additionResult, multiplicationResult) -> {
+            System.out.println("The result is " + additionResult);
+            System.out.println("The multiplication result is " + multiplicationResult);
+            return null;
+        });
+
+        completableFuture.get();
+    }
+}
+```
 
 ## Referencias
 
